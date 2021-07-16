@@ -1,6 +1,6 @@
 export default async (Sequelize, sequelize) => {
     return await sequelize.define('users', {
-        id: {
+        user_id: {
             type: Sequelize.DataTypes.UUID,
             primaryKey: true,
             defaultValue: Sequelize.DataTypes.UUIDV4
@@ -28,7 +28,8 @@ export default async (Sequelize, sequelize) => {
         role: {
             type: Sequelize.DataTypes.ENUM,
             values: ["pm", "admin", "dev", "submitter"],
-            allowNull: false
+            allowNull: false,
+            defaultValue: "submitter"
         },
         about: {
             type: Sequelize.DataTypes.STRING,

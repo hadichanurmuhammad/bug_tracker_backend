@@ -5,6 +5,8 @@ import helmet from 'helmet'
 import morgan from 'morgan'
 import config from './config.js'
 import postgres from './modules/postgres.js'
+import routes from './routes/routes.js'
+import path from 'path'
 
 async function main () {
     let __dirname = path.resolve(path.dirname(''))
@@ -24,6 +26,7 @@ async function main () {
         req.postgres = db
         next()
     })
+    routes(app)
 }
 
 main()
