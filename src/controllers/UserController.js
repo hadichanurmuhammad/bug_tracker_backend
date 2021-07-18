@@ -5,6 +5,7 @@ import sendSms from '../modules/sms.js'
 import codeValidation from '../validations/codeValidation.js'
 import pkg from 'sequelize'
 import moment from 'moment'
+import JWT from '../modules/jwt.js'
 const { Op } = pkg
 
 class UserController {
@@ -98,7 +99,7 @@ class UserController {
                 user_id: user.user_id
             })
 
-            await sendSms(data.phone, `Your code: ${attempt.dataValues.code}`)
+            // await sendSms(data.phone, `Your code: ${attempt.dataValues.code}`)
 
             console.log(attempt.dataValues.code);
 
@@ -131,8 +132,6 @@ class UserController {
 
             if(!attempt) throw new Error('Validation code is not found')
 
-            console.log(attempt.dataValues.attempts, attempt.dataValues.user.dataValues.user_attempts)
-
             const { code } = await codeValidation.validateAsync(req.body)
 
             if(Number(code) !== Number(attempt.dataValues.code)) {
@@ -143,7 +142,7 @@ class UserController {
                         id: validationId
                     }
                 })
-                if(Number(attempt.dataValues.attempts) > 3){
+                if(Number(attempt.dataValues.attempts) > 2){
                     await req.postgres.attempts.destroy({
                         where: {
                             id: validationId
@@ -158,7 +157,7 @@ class UserController {
                         }
                     })
 
-                    if(Number(attempt.dataValues.user.dataValues.user_attempts) >= 3){
+                    if(Number(attempt.dataValues.user.dataValues.user_attempts) > 2){
                         await req.postgres.users.update({
                             user_attempts: 0
                         }, {
@@ -176,6 +175,50 @@ class UserController {
                 }
                 throw new Error("Validation code is incorrect")
             }
+
+            await req.postgres.session_model.destroy({
+                where: {
+                    user_id: attempt.dataValues.user_id
+                }
+            })
+
+            const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress
+            const userAgent = req.headers["user-agent"]
+
+            if(!(ipAddress && userAgent)) {
+                throw new Error("Invalid device") 
+            }
+
+            const session = await req.postgres.session_model.create({
+                user_id: attempt.dataValues.user_id,
+                ip_address: ipAddress,
+                user_agent: userAgent
+            })
+
+            const token = JWT.generateToken({ 
+                id: session.dataValues.id
+            })
+
+            await req.postgres.attempts.destroy({
+                where: {
+                    user_id: attempt.dataValues.user_id
+                }
+            })
+
+            await req.postgres.users.update({
+                user_attempts: 0
+            }, {
+                where: {
+                    user_id: attempt.dataValues.user_id
+                }
+            })
+
+            res.status(201).json({
+                ok: true,
+                message: "Logged in",
+                token: token
+            })
+            
         } catch (e) {
             res.status(401).json({
                 ok: false,
