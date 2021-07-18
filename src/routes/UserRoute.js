@@ -14,6 +14,8 @@ router.post('/validate-code', UserController.validateCode)
 
 router.get('/', AuthMiddleware, UserController.getData)
 
+router.post('/editPhoto', AuthMiddleware, UserController.editPhoto)
+
 export default {
     path: '/users',
     router

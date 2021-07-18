@@ -6,6 +6,7 @@ import codeValidation from '../validations/codeValidation.js'
 import pkg from 'sequelize'
 import moment from 'moment'
 import JWT from '../modules/jwt.js'
+import editPhotoValidation from "../validations/editPhotoValidation.js"
 const { Op } = pkg
 
 class UserController {
@@ -232,11 +233,48 @@ class UserController {
             })
         }
     }
+
+    static async editPhoto(req, res) {
+        try {
+            const data = await editPhotoValidation.validateAsync(req.body)
+
+            await req.postgres.user_photo_model.destroy({
+                where: {
+                    user_id: req.user
+                }
+            })
+
+            const photo = await req.postgres.user_photo_model.create({
+                file_id: data.file_id,
+                user_id: req.user
+            })
+
+            console.log(photo);
+
+            await res.status(202).json({
+                ok: true,
+                message: "Accepted"
+            })
+        } catch (error) {
+            res.status(400).json({
+                ok: false,
+                message: error + ""
+            })
+            console.log(error);
+        }
+    }
+
     static async getData (req, res) {
         try {
             const user = await req.postgres.users.findOne({
                 where: {
                     user_id: req.user
+                },
+                include: {
+                    model: req.postgres.user_photo_model,
+                    include: {
+                        model: req.postgres.file_model
+                    }
                 }
             })
 

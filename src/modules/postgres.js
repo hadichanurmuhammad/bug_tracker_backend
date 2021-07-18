@@ -6,6 +6,8 @@ import AttemptsModel from '../models/AttemptsModel.js'
 import BanModel from '../models/BanModel.js'
 import SessionModel from '../models/SessionModel.js'
 import SettingsModel from '../models/SettingsModel.js'
+import FileModel from '../models/FileModel.js'
+import UserPhotoModel from '../models/UserPhotoModel.js'
 
 const sequelize = new Sequelize(config.PG_CONNECTION_STRING, {
     logging: false
@@ -20,6 +22,8 @@ async function postgres () {
         db.ban_model = await BanModel(Sequelize, sequelize)
         db.session_model = await SessionModel(Sequelize, sequelize)
         db.settings_model = await SettingsModel(Sequelize, sequelize)
+        db.file_model = await FileModel(Sequelize, sequelize)
+        db.user_photo_model = await UserPhotoModel(Sequelize, sequelize)
 
         await db.users.hasMany(db.attempts, {
             foreignKey: {
@@ -63,6 +67,55 @@ async function postgres () {
             }
         })
 
+        await db.users.hasMany(db.file_model, {
+            foreignKey: {
+                name: "user_id",
+                allowNull: false
+            }
+        })
+
+        await db.file_model.belongsTo(db.users, {
+            foreignKey: {
+                name: "user_id",
+                allowNull: false
+            }
+        })
+
+        await db.users.hasMany(db.user_photo_model, {
+            foreignKey: {
+                name: "user_id",
+                allowNull: false
+            }
+        })
+
+        await db.user_photo_model.belongsTo(db.users, {
+            foreignKey: {
+                name: "user_id",
+                allowNull: false
+            }
+        })
+
+         await db.file_model.hasOne(db.user_photo_model, {
+            foreignKey: {
+                name: "file_id",
+                allowNull: false
+            }
+        })
+
+        await db.user_photo_model.belongsTo(db.file_model, {
+            foreignKey: {
+                name: "file_id",
+                allowNull: false
+            }
+        })
+
+        // await db.users.hasOne(db.file_model, {
+        //     foreignKey: {
+        //         name: "photo_id",
+        //         allowNull: true
+        //     }
+        // })
+
         await sequelize.sync({force: false})
 
         // await db.ban_model.destroy({
@@ -85,7 +138,11 @@ async function postgres () {
         //     }
         // )
 
-        // const settings = await db.settings_model.findAll()
+        // const files = await db.file_model.destroy({
+        //     where: {}
+        // })
+        // const files = await db.settings_model.findAll()
+        // console.log(files);
 
 
         // console.log(banTimeSize.dataValues.value)
