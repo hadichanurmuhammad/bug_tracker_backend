@@ -232,6 +232,26 @@ class UserController {
             })
         }
     }
+    static async getData (req, res) {
+        try {
+            const user = await req.postgres.users.findOne({
+                where: {
+                    user_id: req.user
+                }
+            })
+
+            await res.status(200).json({
+                ok: true,
+                data: user.dataValues
+            })
+
+        } catch (e) {
+            res.status(500).json({
+                ok: false,
+                message: error + ""
+            })
+        }
+    }
 }
 
 export default UserController

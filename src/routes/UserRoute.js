@@ -1,5 +1,6 @@
 import express from 'express'
 import UserController from '../controllers/UserController.js'
+import AuthMiddleware from '../middlewares/AuthMiddleware.js'
 
 const router = express.Router()
 
@@ -10,6 +11,8 @@ router.post('/signup', UserController.signup)
 router.post('/login', UserController.login)
 
 router.post('/validate-code', UserController.validateCode)
+
+router.get('/', AuthMiddleware, UserController.getData)
 
 export default {
     path: '/users',

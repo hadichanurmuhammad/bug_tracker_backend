@@ -27,6 +27,8 @@ export default async (req, res, next) => {
             throw new Error('Invalid user agent')
         }
 
+        req.user = session.dataValues.user_id
+
         next()
         
     } catch (e) {
