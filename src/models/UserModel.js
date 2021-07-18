@@ -34,6 +34,11 @@ export default async (Sequelize, sequelize) => {
         about: {
             type: Sequelize.DataTypes.STRING,
             allowNull: true
+        },
+        user_attempts: {
+            type: Sequelize.DataTypes.SMALLINT,
+            allowNull: false,
+            defaultValue: 0
         }
     })
 }
