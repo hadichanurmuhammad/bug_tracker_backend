@@ -32,7 +32,7 @@ export default async (req, res, next) => {
     } catch (e) {
         res.status(403).json({
             ok: false,
-            message: error + ""
+            message: e + ""
         })  
 
     }

@@ -135,6 +135,12 @@ class UserController {
             const { code } = await codeValidation.validateAsync(req.body)
 
             if(Number(code) !== Number(attempt.dataValues.code)) {
+                const settings = await req.postgres.settings_model.findAll()
+
+                const codeAttemptsSize = settings.find(x => x.dataValues.name == "code_attempts")
+                const phoneAttemptsSize = settings.find(x => x.dataValues.name == "phone_attempts")
+                const banTimeSize = settings.find(x => x.dataValues.name == "ban_time")
+
                 await req.postgres.attempts.update({
                     attempts: attempt.dataValues.attempts + 1
                 }, {
@@ -142,7 +148,7 @@ class UserController {
                         id: validationId
                     }
                 })
-                if(Number(attempt.dataValues.attempts) > 2){
+                if(Number(attempt.dataValues.attempts) > Number(codeAttemptsSize.dataValues.value) - 1){
                     await req.postgres.attempts.destroy({
                         where: {
                             id: validationId
@@ -157,7 +163,7 @@ class UserController {
                         }
                     })
 
-                    if(Number(attempt.dataValues.user.dataValues.user_attempts) > 2){
+                    if(Number(attempt.dataValues.user.dataValues.user_attempts) > Number(phoneAttemptsSize.dataValues.value) - 1){
                         await req.postgres.users.update({
                             user_attempts: 0
                         }, {
@@ -168,7 +174,7 @@ class UserController {
 
                         await req.postgres.ban_model.create({
                             user_id: attempt.dataValues.user_id,
-                            expireDate: new Date(Date.now() + 7200000)
+                            expireDate: new Date(Date.now() + Number(banTimeSize.dataValues.value))
                         })
                     }
 

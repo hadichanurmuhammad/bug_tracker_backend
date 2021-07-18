@@ -5,6 +5,7 @@ import UserModel from '../models/UserModel.js'
 import AttemptsModel from '../models/AttemptsModel.js'
 import BanModel from '../models/BanModel.js'
 import SessionModel from '../models/SessionModel.js'
+import SettingsModel from '../models/SettingsModel.js'
 
 const sequelize = new Sequelize(config.PG_CONNECTION_STRING, {
     logging: false
@@ -18,6 +19,7 @@ async function postgres () {
         db.attempts = await AttemptsModel(Sequelize, sequelize)
         db.ban_model = await BanModel(Sequelize, sequelize)
         db.session_model = await SessionModel(Sequelize, sequelize)
+        db.settings_model = await SettingsModel(Sequelize, sequelize)
 
         await db.users.hasMany(db.attempts, {
             foreignKey: {
@@ -68,6 +70,25 @@ async function postgres () {
         //         user_id: id
         //     }
         // })
+
+        // let x = await db.settings_model.create(
+        //     {
+        //         name: "code_attempts",
+        //         value: "3"
+        //     }
+        // )
+
+        // let x = await db.settings_model.create(
+        //     {
+        //         name: "ban_time",
+        //         value: "7200000"
+        //     }
+        // )
+
+        // const settings = await db.settings_model.findAll()
+
+
+        // console.log(banTimeSize.dataValues.value)
 
         // try {
         //     await sequelize.authenticate();
