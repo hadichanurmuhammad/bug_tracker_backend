@@ -1,6 +1,7 @@
 import phoneValidation from '../validations/phoneValidation.js'
 import signupValidation from '../validations/signupValidation.js'
 import randomNumber from 'random-number'
+import sendSms from '../modules/sms.js'
 
 class UserController {
     static async checkPhone (req, res) {
@@ -69,10 +70,20 @@ class UserController {
                 integer: true
             })
 
+            await req.postgres.attempts.destroy({
+                where: {
+                    user_id: user.user_id
+                }
+            })
+
             let attempt = await req.postgres.attempts.create({
                 code: gen(),
                 user_id: user.user_id
             })
+
+            await sendSms(data.phone, `Your code: ${attempt.dataValues.code}`)
+
+            console.log(attempt.dataValues.code);
 
             await res.status(201).json({
                 ok: true,
