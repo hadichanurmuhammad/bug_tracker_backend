@@ -2,6 +2,7 @@ import { Sequelize } from 'sequelize'
 import config from '../config.js'
 
 import UserModel from '../models/UserModel.js'
+import AttemptsModel from '../models/AttemptsModel.js'
 
 const sequelize = new Sequelize(config.PG_CONNECTION_STRING)
 
@@ -10,6 +11,21 @@ async function postgres () {
         let db = {}
 
         db.users = await UserModel(Sequelize, sequelize)
+        db.attempts = await AttemptsModel(Sequelize, sequelize)
+
+        await db.users.hasMany(db.attempts, {
+            foreignKey: {
+                name: 'user_id',
+                allowNull: false
+            }
+        })
+
+        await db.attempts.belongsTo(db.users, {
+            foreignKey: {
+                name: 'user_id',
+                allowNull: false
+            }
+        })
 
         await sequelize.sync()
 
