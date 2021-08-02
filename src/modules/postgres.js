@@ -131,6 +131,14 @@ async function postgres () {
         //     }
         // )
 
+        // let x = await db.users.update({
+        //     role: "pm"
+        // }, {
+        //     where: {
+        //         user_id: ""
+        //     }
+        // })
+
         // let x = await db.settings_model.create(
         //     {
         //         name: "ban_time",

@@ -7,6 +7,7 @@ import pkg from 'sequelize'
 import moment from 'moment'
 import JWT from '../modules/jwt.js'
 import editPhotoValidation from "../validations/editPhotoValidation.js"
+import promoteUserValidation from '../validations/promoteUserValidation.js'
 const { Op } = pkg
 
 class UserController {
@@ -287,6 +288,45 @@ class UserController {
             res.status(500).json({
                 ok: false,
                 message: error + ""
+            })
+        }
+    }
+    static async promoteUser(req, res) {
+        try {
+            const data = await promoteUserValidation.validateAsync(req.body)
+
+            if(data.user_id === req.user) {
+                throw new Error("You can't promote yourself")
+            }
+
+            if(data.role == 'superadmin') throw new Error(`It's banned role`)
+
+            if(data.role == 'admin' && (!req.isSuperAdmin)) throw new Error(`You can't promote admin`)
+
+            const user = await req.postgres.users.findOne({
+                where: {
+                    user_id: data.user_id
+                }
+            })
+
+            if(user.dataValues.role == 'superadmin') throw new Error(`You can't edit this role`)
+
+            await req.postgres.users.update({
+                role: data.role
+            }, {
+                where: {
+                    user_id: data.user_id
+                }
+            })
+
+            await res.status(202).json({
+                ok: true,
+                message: 'Edited'
+            })
+        } catch (e) {
+            res.status(400).json({
+                ok: false,
+                message: e + ""
             })
         }
     }

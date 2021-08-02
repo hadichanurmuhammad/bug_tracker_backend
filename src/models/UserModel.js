@@ -27,7 +27,7 @@ export default async (Sequelize, sequelize) => {
         },
         role: {
             type: Sequelize.DataTypes.ENUM,
-            values: ["pm", "admin", "dev", "submitter"],
+            values: ["pm", "admin", "dev", "submitter", "superadmin"],
             allowNull: false,
             defaultValue: "submitter"
         },
