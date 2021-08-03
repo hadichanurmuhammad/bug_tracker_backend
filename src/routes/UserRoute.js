@@ -5,8 +5,6 @@ import AdminMiddleware from '../middlewares/AdminMiddleware.js'
 
 const router = express.Router()
 
-router.post('/check-phone', UserController.checkPhone)
-
 router.post('/signup', UserController.signup)
 
 router.post('/login', UserController.login)

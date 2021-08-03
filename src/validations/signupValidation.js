@@ -13,5 +13,10 @@ export default Joi.object({
     email: Joi.string()
                 .pattern(/^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i)
                 .required()
-                .error(Error('Email is invalid'))
+                .error(Error('Email is invalid')),
+    password: Joi.string()
+                .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/)
+                .required()
+                .error(Error('Password is invalid'))
+                
 })

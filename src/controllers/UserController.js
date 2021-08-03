@@ -1,38 +1,18 @@
-import phoneValidation from '../validations/phoneValidation.js'
+import loginValidation from '../validations/loginValidation.js'
 import signupValidation from '../validations/signupValidation.js'
 import randomNumber from 'random-number'
-import sendSms from '../modules/sms.js'
 import codeValidation from '../validations/codeValidation.js'
 import pkg from 'sequelize'
-import moment from 'moment'
 import JWT from '../modules/jwt.js'
 import editPhotoValidation from "../validations/editPhotoValidation.js"
 import promoteUserValidation from '../validations/promoteUserValidation.js'
+import mailer from '../modules/nodemailer.js'
+import config from '../config.js'
+import bcrypt from '../modules/bcrypt.js'
 const { Op } = pkg
+const { generateCrypt } = bcrypt
 
 class UserController {
-    static async checkPhone (req, res) {
-        try {
-            const data = await phoneValidation.validateAsync(req.body)
-
-            let user = await req.postgres.users.findOne({
-                where: {
-                    phone: data.phone
-                }
-            })
-
-            res.status(200).json({
-                ok: true,
-                exists: user ? true : false
-            })
-
-        } catch (e) {
-            res.status(400).json({
-                ok: false,
-                message: e + ""
-            })
-        }
-    }
     static async signup (req, res) {
         try {
             const data = await signupValidation.validateAsync(req.body)
@@ -40,49 +20,9 @@ class UserController {
             const user = await req.postgres.users.create({
                 fullName: data.fullName,
                 phone: data.phone,
-                email: data.email
+                email: data.email,
+                password: generateCrypt(data.password)
             })
-
-            await res.status(201).json({
-                ok: true,
-                message: 'Successfully registrated',
-                data: user.dataValues
-            })
-
-        } catch (e) {
-            if (e == "SequelizeUniqueConstraintError: Validation error"){
-                e = 'Phone already exists'
-            }
-            res.status(400).json({
-                ok: false,
-                message: e + ""
-            })
-        }
-    }
-    static async login (req, res) {
-        try {
-            const data = await phoneValidation.validateAsync(req.body)
-
-            const user = await req.postgres.users.findOne({
-                where: {
-                    phone: data.phone
-                }
-            })
-
-            if (!user) throw new Error('User not found')
-
-            const ban = await req.postgres.ban_model.findOne({
-                where: {
-                    user_id: user.dataValues.user_id,
-                    expireDate: {
-                        [Op.gt]: new Date()
-                    }
-                }
-            })
-
-            console.log(ban);
-
-            if(ban) throw new Error(`You are banned until ${moment(ban.dataValues.expireDate)}`)
 
             const gen = randomNumber.generator({
                 min: 100000,
@@ -101,13 +41,52 @@ class UserController {
                 user_id: user.user_id
             })
 
-            // await sendSms(data.phone, `Your code: ${attempt.dataValues.code}`)
+            const message = {
+                from: `Bug tracker <${config.EMAIL}>`,
+                to: data.email,
+                subject: `Verification`,
+                text: `Your code: ${attempt.dataValues.code}`
+            }
 
-            console.log(attempt.dataValues.code);
+            mailer(message)
 
             await res.status(201).json({
                 ok: true,
                 message: 'Code sent',
+                data: user.dataValues,
+                id: attempt.dataValues.id
+            })
+
+        } catch (e) {
+            if (e == "SequelizeUniqueConstraintError: Validation error"){
+                e = 'User already exists'
+            }
+            res.status(400).json({
+                ok: false,
+                message: e + ""
+            })
+            console.log(e);
+        }
+    }
+    static async login (req, res) {
+        try {
+            const data = await loginValidation.validateAsync(req.body)
+
+            const user = await req.postgres.users.findOne({
+                where: {
+                    email: data.email
+                }
+            })
+
+            if (!user) throw new Error('User not found')
+
+            let isTrust = checkCrypt(data.password, user.password)
+
+            if (!isTrust) throw new Error('Password is incorrect')
+
+            await res.status(200).json({
+                ok: true,
+                message: 'Successfully logged',
                 id: attempt.dataValues.id
             })
 
@@ -116,6 +95,7 @@ class UserController {
                 ok: false,
                 message: e + ""
             })
+            console.log(e);
         }
     }
     static async validateCode (req, res) {
@@ -223,7 +203,7 @@ class UserController {
 
             res.status(201).json({
                 ok: true,
-                message: "Logged in",
+                message: "Successfully registered",
                 token: token
             })
             

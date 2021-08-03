@@ -20,6 +20,10 @@ export default async (Sequelize, sequelize) => {
             is: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
             unique: true
         },
+        password: {
+            type: Sequelize.DataTypes.STRING(64),
+            is: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/
+        },
         position: {
             type: Sequelize.DataTypes.ENUM,
             values: ['senior', 'middle', 'junior'],
@@ -39,6 +43,11 @@ export default async (Sequelize, sequelize) => {
             type: Sequelize.DataTypes.SMALLINT,
             allowNull: false,
             defaultValue: 0
+        },
+        verify: {
+            type: Sequelize.DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
         }
     })
 }
