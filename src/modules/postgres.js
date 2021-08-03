@@ -157,8 +157,8 @@ async function postgres () {
         // const files = await db.file_model.destroy({
         //     where: {}
         // })
-        const files = await db.users.findAll()
-        console.log(files);
+        // const files = await db.users.findAll()
+        // console.log(files);
 
 
         // console.log(banTimeSize.dataValues.value)
