@@ -138,6 +138,14 @@ async function postgres () {
         //         user_id: ""
         //     }
         // })
+        // await db.users.update({
+        //     role: "superadmin"
+        // }, {
+        //     where: {
+        //         user_id: "f456faff-3e25-4584-9e7c-7f1ee32cffe4"
+        //     }
+        // })
+
 
         // let x = await db.settings_model.create(
         //     {
@@ -149,8 +157,8 @@ async function postgres () {
         // const files = await db.file_model.destroy({
         //     where: {}
         // })
-        // const files = await db.settings_model.findAll()
-        // console.log(files);
+        const files = await db.users.findAll()
+        console.log(files);
 
 
         // console.log(banTimeSize.dataValues.value)
@@ -161,11 +169,11 @@ async function postgres () {
         //   } catch (error) {
         //     console.error('Unable to connect to the database:', error);
         //   }
-
         return db
     } catch (e) {
         console.log('DB_ERROR:', e);
     }
 }
+postgres()
 
 export default postgres

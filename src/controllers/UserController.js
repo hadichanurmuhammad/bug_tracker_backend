@@ -10,7 +10,7 @@ import mailer from '../modules/nodemailer.js'
 import config from '../config.js'
 import bcrypt from '../modules/bcrypt.js'
 const { Op } = pkg
-const { generateCrypt } = bcrypt
+const { generateCrypt, checkCrypt } = bcrypt
 
 class UserController {
     static async signup (req, res) {
@@ -49,7 +49,8 @@ class UserController {
             }
 
             mailer(message)
-
+            console.log(attempt.dataValues.code);
+            //8972d7eb-3899-4849-879f-78b98a1b30d1
             await res.status(201).json({
                 ok: true,
                 message: 'Code sent',
@@ -86,8 +87,7 @@ class UserController {
 
             await res.status(200).json({
                 ok: true,
-                message: 'Successfully logged',
-                id: attempt.dataValues.id
+                message: 'Successfully logged'
             })
 
         } catch (e) {
@@ -275,13 +275,19 @@ class UserController {
         try {
             const data = await promoteUserValidation.validateAsync(req.body)
 
+            const reqUser = await req.postgres.users.findOne({
+                where: {
+                    user_id: req.user
+                }
+            })
+
             if(data.user_id === req.user) {
                 throw new Error("You can't promote yourself")
             }
 
             if(data.role == 'superadmin') throw new Error(`It's banned role`)
 
-            if(data.role == 'admin' && (!req.isSuperAdmin)) throw new Error(`You can't promote admin`)
+            if(data.role == 'admin' && (reqUser.dataValues.role != 'superadmin')) throw new Error(`You can't promote admin`)
 
             const user = await req.postgres.users.findOne({
                 where: {
@@ -308,6 +314,7 @@ class UserController {
                 ok: false,
                 message: e + ""
             })
+            console.log(e);
         }
     }
 }

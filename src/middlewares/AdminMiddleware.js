@@ -6,11 +6,7 @@ export default async (req, res, next) => {
             }
         })
 
-        if (user.dataValues.role != 'admin') {
-            throw new Error(`You don't have permission`)
-        }
-
-        req.isSuperAdmin = user.dataValues.role == "superadmin"
+        if (user.dataValues.role != 'admin' && user.dataValues.role != 'superadmin') throw new Error(`You don't have permission`)
 
         next()
         
@@ -19,5 +15,6 @@ export default async (req, res, next) => {
             ok: false,
             message: e + ""
         })
+        console.log(e);
     }
 }
