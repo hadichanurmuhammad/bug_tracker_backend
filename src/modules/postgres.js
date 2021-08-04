@@ -8,6 +8,8 @@ import SessionModel from '../models/SessionModel.js'
 import SettingsModel from '../models/SettingsModel.js'
 import FileModel from '../models/FileModel.js'
 import UserPhotoModel from '../models/UserPhotoModel.js'
+import Projectmodel from '../models/ProjectModel.js'
+import Ticketmodel from '../models/TicketModel.js'
 
 const sequelize = new Sequelize(config.PG_CONNECTION_STRING, {
     logging: false
@@ -24,6 +26,50 @@ async function postgres () {
         db.settings_model = await SettingsModel(Sequelize, sequelize)
         db.file_model = await FileModel(Sequelize, sequelize)
         db.user_photo_model = await UserPhotoModel(Sequelize, sequelize)
+        db.projects = await Projectmodel(Sequelize, sequelize)
+        db.tickets = await Ticketmodel(Sequelize, sequelize)
+
+        await db.users.hasMany(db.projects, {
+            foreignKey: {
+                name: 'user_id',
+                allowNull: false
+            }   
+        })
+
+        await db.projects.belongsTo(db.users, {
+            foreignKey: {
+                name: 'user_id',
+                allowNull: false
+            }   
+        })
+
+        await db.users.hasMany(db.tickets, {
+            foreignKey: {
+                name: 'user_id',
+                allowNull: false
+            }   
+        })
+
+        await db.tickets.belongsTo(db.users, {
+            foreignKey: {
+                name: 'user_id',
+                allowNull: false
+            }   
+        })
+
+        await db.projects.hasMany(db.tickets, {
+            foreignKey: {
+                name: 'project_id',
+                allowNull: false
+            }
+        })
+
+        await db.tickets.belongsTo(db.projects, {
+            foreignKey: {
+                name: 'project_id',
+                allowNull: false
+            }
+        })
 
         await db.users.hasMany(db.attempts, {
             foreignKey: {
