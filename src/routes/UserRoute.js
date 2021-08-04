@@ -17,6 +17,8 @@ router.post('/editPhoto', AuthMiddleware, UserController.editPhoto)
 
 router.post('/promoteUser', [AuthMiddleware, AdminMiddleware], UserController.promoteUser)
 
+router.post('/edit', AuthMiddleware, UserController.editPersonalData)
+
 export default {
     path: '/users',
     router

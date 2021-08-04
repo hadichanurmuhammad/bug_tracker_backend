@@ -26,45 +26,45 @@ async function postgres () {
         db.settings_model = await SettingsModel(Sequelize, sequelize)
         db.file_model = await FileModel(Sequelize, sequelize)
         db.user_photo_model = await UserPhotoModel(Sequelize, sequelize)
-        db.projects = await Projectmodel(Sequelize, sequelize)
-        db.tickets = await Ticketmodel(Sequelize, sequelize)
+        db.project_model = await Projectmodel(Sequelize, sequelize)
+        db.ticket_model = await Ticketmodel(Sequelize, sequelize)
 
-        await db.users.hasMany(db.projects, {
+        await db.users.hasMany(db.project_model, {
             foreignKey: {
                 name: 'user_id',
                 allowNull: false
             }   
         })
 
-        await db.projects.belongsTo(db.users, {
+        await db.project_model.belongsTo(db.users, {
             foreignKey: {
                 name: 'user_id',
                 allowNull: false
             }   
         })
 
-        await db.users.hasMany(db.tickets, {
+        await db.users.hasMany(db.ticket_model, {
             foreignKey: {
                 name: 'user_id',
                 allowNull: false
             }   
         })
 
-        await db.tickets.belongsTo(db.users, {
+        await db.ticket_model.belongsTo(db.users, {
             foreignKey: {
                 name: 'user_id',
                 allowNull: false
             }   
         })
 
-        await db.projects.hasMany(db.tickets, {
+        await db.project_model.hasMany(db.ticket_model, {
             foreignKey: {
                 name: 'project_id',
                 allowNull: false
             }
         })
 
-        await db.tickets.belongsTo(db.projects, {
+        await db.ticket_model.belongsTo(db.project_model, {
             foreignKey: {
                 name: 'project_id',
                 allowNull: false
@@ -162,7 +162,7 @@ async function postgres () {
         //     }
         // })
 
-        await sequelize.sync({force: false})
+        // await sequelize.sync({force: true})
 
         // await db.ban_model.destroy({
         //     where: {

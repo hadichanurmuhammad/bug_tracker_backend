@@ -6,6 +6,7 @@ import pkg from 'sequelize'
 import JWT from '../modules/jwt.js'
 import editPhotoValidation from "../validations/editPhotoValidation.js"
 import promoteUserValidation from '../validations/promoteUserValidation.js'
+import editProfileValidation from '../validations/editProfileValidation.js'
 import mailer from '../modules/nodemailer.js'
 import config from '../config.js'
 import bcrypt from '../modules/bcrypt.js'
@@ -315,6 +316,30 @@ class UserController {
                 message: e + ""
             })
             console.log(e);
+        }
+    }
+
+    static async editPersonalData (req, res) {
+        try {
+            const data = await editProfileValidation.validateAsync(req.body)
+
+            await req.postgres.users.update({
+                phone: data.phone
+            }, {
+                where: {
+                    user_id: req.user
+                }
+            })
+
+            await res.status(200).json({
+                ok: true,
+                message: "Accepted"
+            })
+        } catch (e) {
+            res.status(400).json({
+                ok: false,
+                message: e + ""
+            })
         }
     }
 }
