@@ -342,6 +342,42 @@ class UserController {
             })
         }
     }
+
+    static async UserGetController (req, res) {
+        try {
+            const users = req.postgres.users.findAll({})
+
+            res.status(200).json({
+                ok: true,
+                data: users
+            })
+        } catch (e) {
+            res.status(400).json({
+                ok: false,
+                message: e + ""
+            })
+        }
+    }
+
+    static async UserGetOneController (req, res) {
+        try {
+            const user = await req.postgres.users.findOne({
+                where: {
+                    user_id: req.params.user_id
+                }
+            })
+
+            res.status(200).json({
+                ok: true,
+                data: user
+            })
+        } catch (e) {
+            res.status(400).json({
+                ok: false,
+                message: e + ""
+            })
+        }
+    }
 }
 
 export default UserController

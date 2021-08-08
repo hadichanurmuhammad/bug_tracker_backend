@@ -57,7 +57,6 @@ class ProjectController {
                 ok: false,
                 message: e + ""
             })
-            console.log(e);
         }
     }
 }

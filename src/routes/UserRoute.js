@@ -19,6 +19,10 @@ router.post('/promoteUser', [AuthMiddleware, AdminMiddleware], UserController.pr
 
 router.post('/edit', AuthMiddleware, UserController.editPersonalData)
 
+router.get('userList', AuthMiddleware, UserController.UserGetController)
+
+router.get('getUser', AuthMiddleware, UserController.UserGetOneController)
+
 export default {
     path: '/users',
     router
