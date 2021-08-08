@@ -5,10 +5,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon src/server",
-    "start": "forever start src/server",
-    "restart": "forever restart src/server",
-    "stop": "forever stop src/server"
+    "dev": "nodemon src/app",
+    "start": "forever start src/app",
+    "restart": "forever restart src/app",
+    "stop": "forever stop src/app"
   },
   "repository": {
     "type": "git",
