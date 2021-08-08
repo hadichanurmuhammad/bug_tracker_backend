@@ -51,7 +51,7 @@ class UserController {
             }
 
             mailer(message)
-            console.log(attempt.dataValues.code);
+            //console.log(attempt.dataValues.code);
             //8972d7eb-3899-4849-879f-78b98a1b30d1
             await res.status(201).json({
                 ok: true,
@@ -68,7 +68,6 @@ class UserController {
                 ok: false,
                 message: e + ""
             })
-            console.log(e);
         }
     }
     static async login (req, res) {
@@ -97,7 +96,6 @@ class UserController {
                 ok: false,
                 message: e + ""
             })
-            console.log(e);
         }
     }
     static async validateCode (req, res) {
@@ -232,7 +230,7 @@ class UserController {
                 user_id: req.user
             })
 
-            console.log(photo);
+            // console.log(photo);
 
             await res.status(202).json({
                 ok: true,
@@ -243,7 +241,6 @@ class UserController {
                 ok: false,
                 message: error + ""
             })
-            console.log(error);
         }
     }
 
@@ -316,7 +313,6 @@ class UserController {
                 ok: false,
                 message: e + ""
             })
-            console.log(e);
         }
     }
 

@@ -15,6 +15,5 @@ export default async (req, res, next) => {
             ok: false,
             message: e + ""
         })
-        console.log(e);
     }
 }
