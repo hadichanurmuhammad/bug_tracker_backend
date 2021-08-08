@@ -23,6 +23,8 @@ router.get('userList', AuthMiddleware, UserController.UserGetController)
 
 router.get('getUser', AuthMiddleware, UserController.UserGetOneController)
 
+router.post('deleteUser', AuthMiddleware, UserController.DeleteUserController)
+
 export default {
     path: '/users',
     router

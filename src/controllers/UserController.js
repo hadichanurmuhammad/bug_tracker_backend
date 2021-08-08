@@ -7,6 +7,7 @@ import JWT from '../modules/jwt.js'
 import editPhotoValidation from "../validations/editPhotoValidation.js"
 import promoteUserValidation from '../validations/promoteUserValidation.js'
 import editProfileValidation from '../validations/editProfileValidation.js'
+import deleteUserValidation from '../validations/deleteUserValidation.js'
 import mailer from '../modules/nodemailer.js'
 import config from '../config.js'
 import bcrypt from '../modules/bcrypt.js'
@@ -369,6 +370,29 @@ class UserController {
 
             res.status(200).json({
                 ok: true,
+                data: user
+            })
+        } catch (e) {
+            res.status(400).json({
+                ok: false,
+                message: e + ""
+            })
+        }
+    }
+
+    static async DeleteUserController (req, res) {
+        try {
+            const data = await deleteUserValidation.validateAsync(req.body)
+
+            const user = await req.postgres.users.destroy({
+                where: {
+                    user_id: data.user_id
+                }
+            })
+
+            res.status(202).json({
+                ok: true,
+                message: 'Successfully deleted',
                 data: user
             })
         } catch (e) {
