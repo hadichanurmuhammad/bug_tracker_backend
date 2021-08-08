@@ -31,14 +31,14 @@ async function postgres () {
 
         await db.users.hasMany(db.project_model, {
             foreignKey: {
-                name: 'user_id',
+                name: 'project_id',
                 allowNull: false
             }   
         })
 
         await db.project_model.belongsTo(db.users, {
             foreignKey: {
-                name: 'user_id',
+                name: 'project_id',
                 allowNull: false
             }   
         })
@@ -141,7 +141,7 @@ async function postgres () {
             }
         })
 
-         await db.file_model.hasOne(db.user_photo_model, {
+        await db.file_model.hasOne(db.user_photo_model, {
             foreignKey: {
                 name: "file_id",
                 allowNull: false
@@ -162,7 +162,7 @@ async function postgres () {
         //     }
         // })
 
-        // await sequelize.sync({force: true})
+        // await sequelize.sync({force: false})
 
         // await db.ban_model.destroy({
         //     where: {

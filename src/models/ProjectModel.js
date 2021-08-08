@@ -9,7 +9,7 @@ export default async (Sequelize, sequelize) => {
             type: Sequelize.DataTypes.STRING,
             allowNull: false
         },
-        project_link: {
+        projectLink: {
             type: Sequelize.DataTypes.STRING,
             allowNull: false
         },

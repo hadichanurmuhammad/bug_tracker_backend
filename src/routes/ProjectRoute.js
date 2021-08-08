@@ -10,6 +10,8 @@ router.get('/', ProjectController.ProjectGetController)
 
 router.get('/:project_id', ProjectController.ProjectGetOneController)
 
+router.post('/createProject', ProjectController.createProjectController)
+
 export default {
     path: '/project',
     router
