@@ -60,6 +60,31 @@ class TicketController {
             })
         }
     }
+
+    static async CompleteTicketController (req, res) {
+        try {
+            const data = completeTicketValidation.validateAsync(req.body)
+
+            const ticket = req.postgres.ticket_model.update({
+                completed: true
+            }, {
+                where: {
+                    ticket_id: data.ticket_id
+                }
+            })
+
+            res.status(202).json({
+                ok: true,
+                message: 'Edited',
+                data: ticket
+            })
+        } catch (e) {
+            res.status(400).json({
+                ok: false,
+                message: e + ""
+            })
+        }
+    }
 }
 
 export default TicketController

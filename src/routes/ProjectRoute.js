@@ -12,6 +12,8 @@ router.get('/:project_id', ProjectController.ProjectGetOneController)
 
 router.post('/createProject', ProjectController.createProjectController)
 
+router.post('/completeProject', ProjectController.CompleteProjectController)
+
 export default {
     path: '/project',
     router

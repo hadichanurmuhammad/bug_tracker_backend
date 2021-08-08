@@ -1,4 +1,5 @@
 import createProjectValidation from '../validations/createProjectValidation.js'
+import completeProjectValidation from '../validations/completeProjectValidation.js'
 
 class ProjectController {
     static async ProjectGetController (req, res) {
@@ -51,6 +52,31 @@ class ProjectController {
                 ok: true,
                 message: 'Successfully created!',
                 data: project.dataValues
+            })
+        } catch (e) {
+            res.status(400).json({
+                ok: false,
+                message: e + ""
+            })
+        }
+    }
+
+    static async CompleteProjectController (req, res) {
+        try {
+            const data = completeProjectValidation.validateAsync(req.body)
+
+            const project = req.postgres.project_model.update({
+                completed: true
+            }, {
+                where: {
+                    project_id: data.project_id
+                }
+            })
+
+            res.status(202).json({
+                ok: true,
+                message: 'Edited',
+                data: project
             })
         } catch (e) {
             res.status(400).json({
