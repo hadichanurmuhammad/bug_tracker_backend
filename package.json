@@ -6,9 +6,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon src/app",
-    "start": "forever start src/app",
-    "restart": "forever restart src/app",
-    "stop": "forever stop src/app"
+    "start": "node src/app"
   },
   "repository": {
     "type": "git",

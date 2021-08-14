@@ -207,7 +207,6 @@ async function postgres () {
         // console.log(files);
 
 
-        // console.log(banTimeSize.dataValues.value)
 
         // try {
         //     await sequelize.authenticate();
