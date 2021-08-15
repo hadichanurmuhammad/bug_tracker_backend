@@ -80,6 +80,43 @@ class UserController {
                 }
             })
 
+            await req.postgres.session_model.destroy({
+                where: {
+                    user_id: user.user_id
+                }
+            })
+
+            const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress
+            const userAgent = req.headers["user-agent"]
+
+            if(!(ipAddress && userAgent)) {
+                throw new Error("Invalid device") 
+            }
+
+            const session = await req.postgres.session_model.create({
+                user_id: user.user_id,
+                ip_address: ipAddress,
+                user_agent: userAgent
+            })
+
+            const token = JWT.generateToken({ 
+                id: session.dataValues.id
+            })
+
+            await req.postgres.attempts.destroy({
+                where: {
+                    user_id: user.user_id
+                }
+            })
+
+            await req.postgres.users.update({
+                user_attempts: 0
+            }, {
+                where: {
+                    user_id: user.user_id
+                }
+            })
+
             if (!user) throw new Error('User not found')
 
             let isTrust = checkCrypt(data.password, user.password)
@@ -88,7 +125,8 @@ class UserController {
 
             await res.status(200).json({
                 ok: true,
-                message: 'Successfully logged'
+                message: 'Successfully logged',
+                token: token
             })
 
         } catch (e) {
@@ -111,6 +149,8 @@ class UserController {
                     attributes: ["user_attempts"]
                 }
             })
+
+            console.log(attempt);
 
             if(!attempt) throw new Error('Validation code is not found')
 
@@ -360,7 +400,13 @@ class UserController {
         try {
             const user = await req.postgres.users.findOne({
                 where: {
-                    user_id: req.params.user_id
+                    user_id: req.params.user_id,
+                    include:{
+                        model: req.postgres.project_model,
+                        include: {
+                            model: req.postgres.ticket_model    
+                        }
+                    }
                 }
             })
 
