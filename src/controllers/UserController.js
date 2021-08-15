@@ -80,7 +80,11 @@ class UserController {
                 }
             })
 
+<<<<<<< HEAD
             await req.postgres.session_model.destroy({
+=======
+	    await req.postgres.session_model.destroy({
+>>>>>>> aaad4dce4efe1e4992e2c8e6356b30e4cbeef774
                 where: {
                     user_id: user.user_id
                 }
@@ -126,7 +130,11 @@ class UserController {
             await res.status(200).json({
                 ok: true,
                 message: 'Successfully logged',
+<<<<<<< HEAD
                 token: token
+=======
+		token
+>>>>>>> aaad4dce4efe1e4992e2c8e6356b30e4cbeef774
             })
 
         } catch (e) {
