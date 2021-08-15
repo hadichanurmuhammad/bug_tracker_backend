@@ -19,11 +19,12 @@ router.post('/promoteUser', [AuthMiddleware, AdminMiddleware], UserController.pr
 
 router.post('/edit', AuthMiddleware, UserController.editPersonalData)
 
-router.get('userList', AuthMiddleware, UserController.UserGetController)
+router.get('/userList', AuthMiddleware, UserController.UserGetController)
 
-router.get('getUser', AuthMiddleware, UserController.UserGetOneController)
+router.get('/getUser', AuthMiddleware, UserController.UserGetOneController)
 
-router.post('deleteUser', [AuthMiddleware, AdminMiddleware], UserController.DeleteUserController)
+router.post('/deleteUser', [AuthMiddleware, AdminMiddleware], UserController.DeleteUserController)
+
 
 export default {
     path: '/users',
