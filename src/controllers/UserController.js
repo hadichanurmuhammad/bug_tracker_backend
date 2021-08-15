@@ -126,7 +126,7 @@ class UserController {
             await res.status(200).json({
                 ok: true,
                 message: 'Successfully logged',
-		token: token
+		token
             })
 
         } catch (e) {

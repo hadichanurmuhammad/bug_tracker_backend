@@ -6,7 +6,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon src/app",
-    "start": "node src/app"
+    "start": "forever start src/app",
+    "restart": "forever restart src/app",
+    "stop": "forever stop src/app"
   },
   "repository": {
     "type": "git",
@@ -26,6 +28,7 @@
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-fileupload": "^1.2.1",
+    "forever-monitor": "^3.0.3",
     "form-data": "^4.0.0",
     "helmet": "^4.6.0",
     "joi": "^17.4.1",
