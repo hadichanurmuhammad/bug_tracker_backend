@@ -79,6 +79,12 @@ class UserController {
                     email: data.email
                 }
             })
+            
+            if (!user) throw new Error('User not found')
+
+            let isTrust = checkCrypt(data.password, user.password)
+
+            if (!isTrust) throw new Error('Password is incorrect')
 
 	        await req.postgres.session_model.destroy({
                 where: {
@@ -117,16 +123,12 @@ class UserController {
                 }
             })
 
-            if (!user) throw new Error('User not found')
-
-            let isTrust = checkCrypt(data.password, user.password)
-
-            if (!isTrust) throw new Error('Password is incorrect')
 
             await res.status(200).json({
                 ok: true,
                 message: 'Successfully logged',
-		        token
+		        token,
+                data: user.dataValues
             })
 
         } catch (e) {
