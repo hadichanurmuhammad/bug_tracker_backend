@@ -26,6 +26,7 @@ async function main () {
         req.postgres = db
         next()
     })
+    app.options('*', cors())
     routes(app)
 }
 
