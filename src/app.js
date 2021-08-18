@@ -17,7 +17,7 @@ async function main () {
     const server = http.createServer(app)
     server.listen(PORT, () => console.log(`HTTP server ready`))
 
-    app.use(cors())
+    app.use(cors())  
     app.use(helmet())
     app.use(morgan('dev'))
     app.use(express.json())
@@ -26,7 +26,6 @@ async function main () {
         req.postgres = db
         next()
     })
-    app.options('*', cors())
     routes(app)
 }
 
