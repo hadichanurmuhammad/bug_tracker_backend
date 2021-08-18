@@ -4,7 +4,12 @@ import completeProjectValidation from '../validations/completeProjectValidation.
 class ProjectController {
     static async ProjectGetController (req, res) {
         try {
-            const projects = await req.postgres.project_model.findAll({})
+            const projects = await req.postgres.project_model.findAll({
+                include: {
+                    model: req.postgres.users
+                }
+            })
+            console.log(req);
 
             res.status(200).json({
                 ok: true,
